@@ -1,0 +1,118 @@
+{%- extends "base.html" %}
+
+{% block title %}BootPy by JNK{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+    <script>
+        const elementRelayColor0 = document.querySelector('.relay-color-0')
+        const elementRelayColor1 = document.querySelector('.relay-color-1')
+        const elementRelayColor2 = document.querySelector('.relay-color-2')
+        const elementRelayColor3 = document.querySelector('.relay-color-3')
+        const styleRelayColor0 = getComputedStyle(elementRelayColor0)
+        const styleRelayColor1 = getComputedStyle(elementRelayColor1)
+        const styleRelayColor2 = getComputedStyle(elementRelayColor2)
+        const styleRelayColor3 = getComputedStyle(elementRelayColor3)
+        var ctx = document.getElementById("myChart").getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+              labels: {{ chart_labels|tojson|safe }},
+              datasets: [{
+                label: '# Relay0',
+                backgroundColor: styleRelayColor0.color,
+                borderColor: styleRelayColor0.color,
+                data: {{ relays[0].get_events_last_seven_days() }},
+                fill: false,
+              }, {
+                label: '# Relay1',
+                fill: false,
+                backgroundColor: styleRelayColor1.color,
+                borderColor: styleRelayColor1.color,
+                data: {{ relays[1].get_events_last_seven_days() }},
+              }, {
+                label: '# Relay2',
+                fill: false,
+                backgroundColor: styleRelayColor2.color,
+                borderColor: styleRelayColor2.color,
+                data: {{ relays[2].get_events_last_seven_days() }},
+              }, {
+                label: '# Relay3',
+                fill: false,
+                backgroundColor: styleRelayColor3.color,
+                borderColor: styleRelayColor3.color,
+                data: {{ relays[3].get_events_last_seven_days() }},
+              }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                }
+            }
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <section class="container-fluid bg-dark">
+      <section class="row justify-content-center">
+        <section class="col ml-3 text-white text-center">
+            <h1><i class="fa fa-power-off mx-2"></i>PowerPy</h1>
+        </section>
+      </section>
+    </section>
+    <div class="row tile_count justify-content-center">
+        {% for relay in relays %}
+        <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count pb-3 text-center relay-color-{{ relay.id - 1 }}">
+        <span class="count_top"><i class="fa fa-microchip"></i> {{ relay.name }}</span>
+        <div class="count">{{ relay.get_event_count() }}</div>
+        <span class="count_bottom"><i class="fa fa-sync-alt"></i> since last reset</span>
+      </div>
+        {% endfor %}
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-8 mb-md-4">
+            <canvas id="myChart" height="150"></canvas>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="page-header my-md-2">
+                <h2>Relay Stats</h2>
+            </div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Relay#</th>
+                    <th>Last Reset</th>
+                    <th>Reboots</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for relay in relays %}
+                <tr>
+                    <td class="relay-color-{{ relay.id - 1 }}">
+                        <a class="device-id">
+                            <i class="fa fa-microchip"></i> {{ relay.name }}</a></td>
+                    <td>{{ relay.last_reset }}</td>
+                    <td>{{ relay.get_event_count() }}</td>
+                    <td>
+                        <form action="{{ url_for('site.relay_by_id', relay_id=relay.id) }}">
+                            <button class="btn btn-dark btn-sm" formmethod="post" type="submit" name="Action" value="Reboot">Reboot</button>
+                            <button class="btn btn-danger btn-sm" formmethod="post" type="submit" name="Action" value="Reset">Reset</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+

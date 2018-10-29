@@ -89,6 +89,7 @@
                 <tr>
                     <th>Relay#</th>
                     <th>Last Reset</th>
+                    <th>Last Reboot</th>
                     <th>Reboots</th>
                     <th>Actions</th>
                 </tr>
@@ -100,6 +101,7 @@
                         <a class="device-id">
                             <i class="fa fa-microchip"></i> {{ relay.name }}</a></td>
                     <td>{{ relay.last_reset }}</td>
+                    <td>{{ relay.get_last_reboot() }}</td>
                     <td>{{ relay.get_event_count() }}</td>
                     <td>
                         <form action="{{ url_for('site.relay_by_id', relay_id=relay.id) }}">

@@ -44,6 +44,10 @@ class Relay(db.Model):
         relay.last_reset = datetime.utcnow()
         db.session.commit()
 
+    def get_last_reboot(self):
+        relay_event = db.session.query(RelayEvent).filter(RelayEvent.relay_id == self.id).order_by(RelayEvent.id.desc()).first()
+        return relay_event.power_off
+
     def get_event_count(self):
         return RelayEvent.query.filter_by(relay_id=self.id).count()
 

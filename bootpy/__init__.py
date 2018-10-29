@@ -20,7 +20,7 @@ from bootpy.api.routes import api as api_blueprint
 from bootpy.site.routes import site as site_blueprint
 from .udp.udp import UdpServer
 
-udp_server = UdpServer('localhost', 5001)
+udp_server = UdpServer('0.0.0.0', 5005)
 
 app.register_blueprint(api_blueprint, url_prefix='/api')
 app.register_blueprint(site_blueprint)

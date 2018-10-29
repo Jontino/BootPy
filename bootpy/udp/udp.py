@@ -2,9 +2,9 @@ import threading
 import socket
 from..models import Relay
 
-# UDP_IP = "0.0.0.0"
-UDP_IP = "localhost"
-UDP_PORT = 5001
+UDP_IP = "0.0.0.0"
+# UDP_IP = "localhost"
+UDP_PORT = 5005
 
 
 class UdpServer:
@@ -16,7 +16,7 @@ class UdpServer:
 
 
 def worker(ip_address, port):
-    print(' * UDP listener thread started')
+    print(' * UDP listener thread started on {}:{}'.format(ip_address, port))
     sock = socket.socket(socket.AF_INET,  # Internet
                          socket.SOCK_DGRAM)  # UDP
     sock.bind((ip_address, port))
